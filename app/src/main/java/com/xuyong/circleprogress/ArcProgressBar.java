@@ -137,6 +137,69 @@ public class ArcProgressBar extends View {
         initView();
     }
 
+    //开放api//
+    public void setmArcBgColor(int mArcBgColor) {
+        this.mArcBgColor = mArcBgColor;
+    }
+
+    public void setmArcForeEndColor(int mArcForeEndColor) {
+        this.mArcForeEndColor = mArcForeEndColor;
+    }
+
+    public void setmArcForeStartColor(int mArcForeStartColor) {
+        this.mArcForeStartColor = mArcForeStartColor;
+    }
+
+    public void setmDottedDefaultColor(int mDottedDefaultColor) {
+        this.mDottedDefaultColor = mDottedDefaultColor;
+    }
+
+    public void setmDottedRunColor(int mDottedRunColor) {
+        this.mDottedRunColor = mDottedRunColor;
+    }
+
+    public void setmPdDistance(int mPdDistance) {
+        this.mPdDistance = mPdDistance;
+    }
+
+    public void setmDottedLineCount(int mDottedLineCount) {
+        this.mDottedLineCount = mDottedLineCount;
+    }
+
+    public void setmDottedLineWidth(int mDottedLineWidth) {
+        this.mDottedLineWidth = mDottedLineWidth;
+    }
+
+    public void setmDottedLineHeight(int mDottedLineHeight) {
+        this.mDottedLineHeight = mDottedLineHeight;
+    }
+
+    public void setmLineDistance(int mLineDistance) {
+        this.mLineDistance = mLineDistance;
+    }
+
+    public void setmProgressMax(int mProgressMax) {
+        this.mProgressMax = mProgressMax;
+    }
+
+    public void setmProgressTextSize(int mProgressTextSize) {
+        this.mProgressTextSize = mProgressTextSize;
+    }
+
+    public void setmProgressTextRunColor(int mProgressTextRunColor) {
+        this.mProgressTextRunColor = mProgressTextRunColor;
+    }
+
+    public void setmProgressDesc(String mProgressDesc) {
+        this.mProgressDesc = mProgressDesc;
+    }
+
+    public void setUseGradient(boolean useGradient) {
+        this.useGradient = useGradient;
+    }
+
+    //开放api//
+
     private void intiAttributes(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ArcProgressBar);
         mPdDistance = a.getInteger(R.styleable.ArcProgressBar_arcDistance, mPdDistance);
@@ -233,14 +296,14 @@ public class ArcProgressBar extends View {
         drawDottedLineArc(canvas);
         drawRunDottedLineArc(canvas);
         drawRunText(canvas);
-//        canvas.rotate(135, mArcCenterX, mArcCenterX);
+        canvas.rotate(135, mArcCenterX, mArcCenterX);
         canvas.drawArc(mArcRect, 0, 270, false, mArcBgPaint);//画背景圆弧
-        canvas.drawRect(mArcRect, mArcBgPaint);//画直角矩形
-        canvas.drawCircle(400, 400, 100, mArcForePaint);//画圆
+//        canvas.drawRect(mArcRect, mArcBgPaint);//画直角矩形
+//        canvas.drawCircle(400, 400, 100, mArcForePaint);//画圆
         canvas.drawArc(mArcRect, 0, 0, false, mArcForePaint);//画前景圆弧
-        canvas.drawColor(Color.TRANSPARENT);//设置画布背景
-        canvas.drawLine(100, 100, 400, 400, mArcBgPaint);//画直线
-        canvas.drawPoint(500, 500, mArcBgPaint);//画点
+//        canvas.drawColor(Color.TRANSPARENT);//设置画布背景
+//        canvas.drawLine(100, 100, 400, 400, mArcBgPaint);//画直线
+//        canvas.drawPoint(500, 500, mArcBgPaint);//画点
         mProgressPaint.setColor(getResources().getColor(R.color.gray));
         mProgressPaint.setTextSize(dp2px(getResources(), 18));
         drawRunFullLineArc(canvas);
