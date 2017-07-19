@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.text.TextUtils;
@@ -208,8 +211,7 @@ public class ArcProgressBar extends View {
         mArcRect.left = 0;
         mArcRect.right = w;
         mArcRect.bottom = h;
-
-        mArcRect.inset(mArcWidth / 2, mArcWidth / 2);
+        mArcRect.inset(mArcWidth / 2, mArcWidth / 2);//设置矩形的宽度
         mArcRadius = (int) (mArcRect.width() / 2);
 
         double sqrt = Math.sqrt(mArcRadius * mArcRadius + mArcRadius * mArcRadius);
@@ -231,9 +233,14 @@ public class ArcProgressBar extends View {
         drawDottedLineArc(canvas);
         drawRunDottedLineArc(canvas);
         drawRunText(canvas);
-        canvas.rotate(135, mArcCenterX, mArcCenterX);
-        canvas.drawArc(mArcRect, 0, 270, false, mArcBgPaint);
-        canvas.drawArc(mArcRect, 0, 0, false, mArcForePaint);
+//        canvas.rotate(135, mArcCenterX, mArcCenterX);
+        canvas.drawArc(mArcRect, 0, 270, false, mArcBgPaint);//画背景圆弧
+        canvas.drawRect(mArcRect, mArcBgPaint);//画直角矩形
+        canvas.drawCircle(400, 400, 100, mArcForePaint);//画圆
+        canvas.drawArc(mArcRect, 0, 0, false, mArcForePaint);//画前景圆弧
+        canvas.drawColor(Color.TRANSPARENT);//设置画布背景
+        canvas.drawLine(100, 100, 400, 400, mArcBgPaint);//画直线
+        canvas.drawPoint(500, 500, mArcBgPaint);//画点
         mProgressPaint.setColor(getResources().getColor(R.color.gray));
         mProgressPaint.setTextSize(dp2px(getResources(), 18));
         drawRunFullLineArc(canvas);
