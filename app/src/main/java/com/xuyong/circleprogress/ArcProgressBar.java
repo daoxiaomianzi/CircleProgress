@@ -97,7 +97,7 @@ public class ArcProgressBar extends View {
     /**
      * 进度文字大小
      */
-    private int mProgressTextSize = 35;
+    private int mProgressTextSize = 34;
     /**
      * 进度文字颜色
      */
