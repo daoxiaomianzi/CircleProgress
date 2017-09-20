@@ -48,7 +48,7 @@ public class ArcProgressBar extends View {
     /**
      * 圆弧宽度
      */
-    private float mArcWidth = 35.0f;
+    private float mArcWidth = 11.0f;
     /**
      * 背景圆弧颜色
      */
@@ -89,7 +89,7 @@ public class ArcProgressBar extends View {
     /**
      * 圆弧跟虚线之间的距离
      */
-    private int mLineDistance = 25;
+    private int mLineDistance = 8;
     /**
      * 进度条最大值
      */
@@ -227,25 +227,19 @@ public class ArcProgressBar extends View {
         mArcBgPaint = new Paint();
         mArcBgPaint.setAntiAlias(true);
         mArcBgPaint.setStyle(Paint.Style.STROKE);
-        mArcBgPaint.setStrokeWidth(mArcWidth);
+        mArcBgPaint.setStrokeWidth(dp2px(getResources(), mArcWidth));
         mArcBgPaint.setColor(mArcBgColor);
         mArcBgPaint.setStrokeCap(Paint.Cap.ROUND);
         // 外层前景圆弧的画笔
         mArcForePaint = new Paint();
         mArcForePaint.setAntiAlias(true);
         mArcForePaint.setStyle(Paint.Style.STROKE);
-        mArcForePaint.setStrokeWidth(mArcWidth);
-        if (useGradient) {
-            LinearGradient gradient = new LinearGradient(0, 0, mScressWidth - 2 * mPdDistance, mScressWidth - 2 * mPdDistance, mArcForeEndColor, mArcForeStartColor, Shader.TileMode.CLAMP);
-            mArcForePaint.setShader(gradient);
-        } else {
-            mArcForePaint.setColor(mArcForeStartColor);
-        }
+        mArcForePaint.setStrokeWidth(dp2px(getResources(), mArcWidth));
         mArcForePaint.setStrokeCap(Paint.Cap.ROUND);
         // 内测虚线的画笔
         mDottedLinePaint = new Paint();
         mDottedLinePaint.setAntiAlias(true);
-        mDottedLinePaint.setStrokeWidth(mDottedLineHeight);
+        mDottedLinePaint.setStrokeWidth(dp2px(getResources(), mDottedLineHeight));
         mDottedLinePaint.setColor(mDottedDefaultColor);
         //
         mRonudRectPaint = new Paint();
@@ -260,8 +254,8 @@ public class ArcProgressBar extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = mScressWidth - 2 * mPdDistance;
-        setMeasuredDimension(width, width);
+//        int width = mScressWidth - 2 * mPdDistance;
+//        setMeasuredDimension(width, width);
     }
 
     @Override
@@ -274,7 +268,7 @@ public class ArcProgressBar extends View {
         mArcRect.left = 0;
         mArcRect.right = w;
         mArcRect.bottom = h;
-        mArcRect.inset(mArcWidth / 2, mArcWidth / 2);//设置矩形的宽度
+        mArcRect.inset(dp2px(getResources(), mArcWidth) / 2, dp2px(getResources(), mArcWidth) / 2);//设置矩形的宽度
         mArcRadius = (int) (mArcRect.width() / 2);
 
         double sqrt = Math.sqrt(mArcRadius * mArcRadius + mArcRadius * mArcRadius);
@@ -282,9 +276,15 @@ public class ArcProgressBar extends View {
         aDistance = Math.sin(Math.PI * 45 / 180) * mArcRadius;
 
         // 内部虚线的外部半径
-        mExternalDottedLineRadius = mArcRadius - mArcWidth / 2 - mLineDistance;
+        mExternalDottedLineRadius = mArcRadius - dp2px(getResources(), mArcWidth) / 2 - dp2px(getResources(), mLineDistance);
         // 内部虚线的内部半径
-        mInsideDottedLineRadius = mExternalDottedLineRadius - mDottedLineWidth;
+        mInsideDottedLineRadius = mExternalDottedLineRadius - dp2px(getResources(), mDottedLineWidth);
+        if (useGradient) {
+            LinearGradient gradient = new LinearGradient(0, 0, getMeasuredWidth(), getMeasuredHeight(), mArcForeEndColor, mArcForeStartColor, Shader.TileMode.CLAMP);
+            mArcForePaint.setShader(gradient);
+        } else {
+            mArcForePaint.setColor(mArcForeStartColor);
+        }
     }
 
     @Override
@@ -292,7 +292,7 @@ public class ArcProgressBar extends View {
         super.onDraw(canvas);
         mArcBgPaint.setColor(mArcBgColor);
         canvas.drawText("信用额度", mArcCenterX - mProgressPaint.measureText("信用额度") / 2,
-                mArcCenterX - (mProgressPaint.descent() + mProgressPaint.ascent()) / 2 - 60, mProgressPaint);
+                mArcCenterX - (mProgressPaint.descent() + mProgressPaint.ascent()) / 2 - dp2px(getResources(), 20), mProgressPaint);
         drawDottedLineArc(canvas);
         drawRunDottedLineArc(canvas);
         drawRunText(canvas);
@@ -320,7 +320,7 @@ public class ArcProgressBar extends View {
         mProgressPaint.setTextSize(dp2px(getResources(), mProgressTextSize));
         mProgressPaint.setColor(mProgressTextRunColor);
         canvas.drawText(progressStr, mArcCenterX - mProgressPaint.measureText(progressStr) / 2,
-                mArcCenterX - (mProgressPaint.descent() + mProgressPaint.ascent()) / 2 + 40, mProgressPaint);
+                mArcCenterX - (mProgressPaint.descent() + mProgressPaint.ascent()) / 2 + dp2px(getResources(), 13), mProgressPaint);
     }
 
     public void restart() {
