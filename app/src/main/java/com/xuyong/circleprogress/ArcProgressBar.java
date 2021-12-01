@@ -7,18 +7,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.text.TextUtils;
+import android.graphics.SweepGradient;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.WindowManager;
 
 /**
- * Created by xuyong on 17/7/17.
+ * @author xuyong
+ * @date 17/7/17
  */
 public class ArcProgressBar extends View {
     /**
@@ -36,11 +34,24 @@ public class ArcProgressBar extends View {
     /**
      * 底部字矩形背景画笔
      */
-    private Paint mRonudRectPaint;
+    private Paint mRoundRectPaint;
     /**
-     * 中间进度画笔
+     * 底部字画笔
      */
-    private Paint mProgressPaint;
+    private Paint mBottomTextPaint;
+    /**
+     * 中间分数整数画笔
+     */
+    private Paint mIntScorePaint;
+    /**
+     * 中间分数小数画笔
+     */
+    private Paint mDecScorePaint;
+
+    /**
+     * 更新日期画笔
+     */
+    private Paint mDatePaint;
     /**
      * 外层圆弧需要
      */
@@ -48,36 +59,34 @@ public class ArcProgressBar extends View {
     /**
      * 圆弧宽度
      */
-    private float mArcWidth = 11.0f;
+    private final float mArcWidth = 12.0f;
     /**
      * 背景圆弧颜色
      */
-    private int mArcBgColor = 0xFFC9D7EC;
+    private int mArcBgColor = 0xFF95A4B9;
     /**
      * 前景圆弧结束颜色
      */
-    private int mArcForeEndColor = 0xFF46D0FA;
+    private int mArcForeEndColor = 0xFF286CE5;
     /**
      * 前景圆弧开始颜色
      */
-    private int mArcForeStartColor = 0xFF3486D7;
+    private int mArcForeStartColor = 0xFF76A6FF;
     /**
      * 虚线默认颜色
      */
     private int mDottedDefaultColor = 0xFF9799A1;
     /**
-     * 虚线变动颜色
+     * 更新日期颜色
      */
-    private int mDottedRunColor = 0xFF3895EB;
-    /**
-     * 圆弧两边的距离
-     */
-    private int mPdDistance = 50;
+    private final int mDateColor = 0xFFB3B3B3;
 
+    private final int mRoundRectStartColor = 0xFF81A5FF;
+    private final int mRoundRectEndColor = 0xFF4883F0;
     /**
      * 线条数
      */
-    private int mDottedLineCount = 100;
+    private int mDottedLineCount = 120;
     /**
      * 线条宽度
      */
@@ -95,33 +104,30 @@ public class ArcProgressBar extends View {
      */
     private int mProgressMax = 100;
     /**
-     * 进度文字大小
+     * 更新日期
      */
-    private int mProgressTextSize = 35;
+    private String mUpdateDate = "2021.03.10更新";
     /**
-     * 进度文字颜色
+     * 分数排行百分比
      */
-    private int mProgressTextRunColor = 0xFFDA6E81;
+    private String mScoreRank = "超过99%的同城司机";
+    /**
+     * 分数
+     */
+    private String mScore = "850.59";
 
     /**
-     * 进度描述
+     * 是否使用渐变
      */
-    private String mProgressDesc;
-
-    //是否使用渐变
     protected boolean useGradient = true;
 
-    private int mScressWidth;
     private int mProgress;
     private float mExternalDottedLineRadius;
     private float mInsideDottedLineRadius;
     private int mArcCenterX;
-    private int mArcRadius; // 圆弧半径
-    private double bDistance;
-    private double aDistance;
-    private boolean isRestart = false;
     private int mRealProgress;
 
+    private int mScoreProgress;
 
     public ArcProgressBar(Context context) {
         this(context, null, 0);
@@ -137,97 +143,27 @@ public class ArcProgressBar extends View {
         initView();
     }
 
-    //开放api//
-    public void setmArcBgColor(int mArcBgColor) {
-        this.mArcBgColor = mArcBgColor;
-    }
-
-    public void setmArcForeEndColor(int mArcForeEndColor) {
-        this.mArcForeEndColor = mArcForeEndColor;
-    }
-
-    public void setmArcForeStartColor(int mArcForeStartColor) {
-        this.mArcForeStartColor = mArcForeStartColor;
-    }
-
-    public void setmDottedDefaultColor(int mDottedDefaultColor) {
-        this.mDottedDefaultColor = mDottedDefaultColor;
-    }
-
-    public void setmDottedRunColor(int mDottedRunColor) {
-        this.mDottedRunColor = mDottedRunColor;
-    }
-
-    public void setmPdDistance(int mPdDistance) {
-        this.mPdDistance = mPdDistance;
-    }
-
-    public void setmDottedLineCount(int mDottedLineCount) {
-        this.mDottedLineCount = mDottedLineCount;
-    }
-
-    public void setmDottedLineWidth(int mDottedLineWidth) {
-        this.mDottedLineWidth = mDottedLineWidth;
-    }
-
-    public void setmDottedLineHeight(int mDottedLineHeight) {
-        this.mDottedLineHeight = mDottedLineHeight;
-    }
-
-    public void setmLineDistance(int mLineDistance) {
-        this.mLineDistance = mLineDistance;
-    }
-
-    public void setmProgressMax(int mProgressMax) {
-        this.mProgressMax = mProgressMax;
-    }
-
-    public void setmProgressTextSize(int mProgressTextSize) {
-        this.mProgressTextSize = mProgressTextSize;
-    }
-
-    public void setmProgressTextRunColor(int mProgressTextRunColor) {
-        this.mProgressTextRunColor = mProgressTextRunColor;
-    }
-
-    public void setmProgressDesc(String mProgressDesc) {
-        this.mProgressDesc = mProgressDesc;
-    }
-
-    public void setUseGradient(boolean useGradient) {
-        this.useGradient = useGradient;
-    }
-
-    //开放api//
-
     private void intiAttributes(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ArcProgressBar);
-        mPdDistance = a.getInteger(R.styleable.ArcProgressBar_arcDistance, mPdDistance);
         mArcBgColor = a.getColor(R.styleable.ArcProgressBar_arcBgColor, mArcBgColor);
         mArcForeStartColor = a.getColor(R.styleable.ArcProgressBar_arcForeStartColor, mArcForeStartColor);
         mArcForeEndColor = a.getColor(R.styleable.ArcProgressBar_arcForeEndColor, mArcForeEndColor);
         mDottedDefaultColor = a.getColor(R.styleable.ArcProgressBar_dottedDefaultColor, mDottedDefaultColor);
-        mDottedRunColor = a.getColor(R.styleable.ArcProgressBar_dottedRunColor, mDottedRunColor);
         mDottedLineCount = a.getInteger(R.styleable.ArcProgressBar_dottedLineCount, mDottedLineCount);
         mDottedLineWidth = a.getInteger(R.styleable.ArcProgressBar_dottedLineWidth, mDottedLineWidth);
         mDottedLineHeight = a.getInteger(R.styleable.ArcProgressBar_dottedLineHeight, mDottedLineHeight);
         mLineDistance = a.getInteger(R.styleable.ArcProgressBar_lineDistance, mLineDistance);
         mProgressMax = a.getInteger(R.styleable.ArcProgressBar_progressMax, mProgressMax);
-        mProgressTextSize = a.getInteger(R.styleable.ArcProgressBar_progressTextSize, mProgressTextSize);
-        mProgressDesc = a.getString(R.styleable.ArcProgressBar_progressDesc);
-        mProgressTextRunColor = a.getColor(R.styleable.ArcProgressBar_progressTextRunColor, mProgressTextRunColor);
         useGradient = a.getBoolean(R.styleable.ArcProgressBar_arcUseGradient, useGradient);
         a.recycle();
     }
 
     private void initView() {
-        int[] screenWH = getScreenWH();
-        mScressWidth = screenWH[0];
         // 外层背景圆弧的画笔
         mArcBgPaint = new Paint();
         mArcBgPaint.setAntiAlias(true);
         mArcBgPaint.setStyle(Paint.Style.STROKE);
-        mArcBgPaint.setStrokeWidth(dp2px(getResources(), mArcWidth));
+        mArcBgPaint.setStrokeWidth(dp2px(getResources(), mArcWidth / 3));
         mArcBgPaint.setColor(mArcBgColor);
         mArcBgPaint.setStrokeCap(Paint.Cap.ROUND);
         // 外层前景圆弧的画笔
@@ -242,46 +178,58 @@ public class ArcProgressBar extends View {
         mDottedLinePaint.setStrokeWidth(dp2px(getResources(), mDottedLineHeight));
         mDottedLinePaint.setColor(mDottedDefaultColor);
         //
-        mRonudRectPaint = new Paint();
-        mRonudRectPaint.setAntiAlias(true);
-        mRonudRectPaint.setColor(mDottedRunColor);
-        mRonudRectPaint.setStyle(Paint.Style.FILL);
-        // 中间进度画笔
-        mProgressPaint = new Paint();
-        mProgressPaint.setAntiAlias(true);
+        mRoundRectPaint = new Paint();
+        mRoundRectPaint.setAntiAlias(true);
+        mRoundRectPaint.setColor(Color.WHITE);
+        mRoundRectPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        mRoundRectPaint.setStyle(Paint.Style.FILL);
+        // 中间整数分数画笔
+        mIntScorePaint = new Paint();
+        mIntScorePaint.setAntiAlias(true);
+        mIntScorePaint.setColor(Color.WHITE);
+        mIntScorePaint.setTextSize(dp2px(getResources(), 56));
+        //中间小数分数画笔
+        mDecScorePaint = new Paint();
+        mDecScorePaint.setAntiAlias(true);
+        mDecScorePaint.setColor(Color.WHITE);
+        mDecScorePaint.setTextSize(dp2px(getResources(), 20));
+        //更新日期画笔
+        mDatePaint = new Paint();
+        mDatePaint.setAntiAlias(true);
+        mDatePaint.setTextSize(dp2px(getResources(), 14));
+        mDatePaint.setColor(mDateColor);
+        //底部文字画笔
+        mBottomTextPaint = new Paint();
+        mBottomTextPaint.setTextSize(dp2px(getResources(), 16));
+        mBottomTextPaint.setColor(Color.WHITE);
+        mBottomTextPaint.setAntiAlias(true);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-//        int width = mScressWidth - 2 * mPdDistance;
-//        setMeasuredDimension(width, width);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         mArcCenterX = (int) (w / 2.f);
-
         mArcRect = new RectF();
         mArcRect.top = 0;
         mArcRect.left = 0;
         mArcRect.right = w;
         mArcRect.bottom = h;
-        mArcRect.inset(dp2px(getResources(), mArcWidth) / 2, dp2px(getResources(), mArcWidth) / 2);//设置矩形的宽度
-        mArcRadius = (int) (mArcRect.width() / 2);
-
-        double sqrt = Math.sqrt(mArcRadius * mArcRadius + mArcRadius * mArcRadius);
-        bDistance = Math.cos(Math.PI * 45 / 180) * mArcRadius;
-        aDistance = Math.sin(Math.PI * 45 / 180) * mArcRadius;
-
+        //设置矩形的宽度
+        mArcRect.inset(dp2px(getResources(), mArcWidth) / 2, dp2px(getResources(), mArcWidth) / 2);
+        // 圆弧半径
+        int mArcRadius = (int) (mArcRect.width() / 2);
         // 内部虚线的外部半径
         mExternalDottedLineRadius = mArcRadius - dp2px(getResources(), mArcWidth) / 2 - dp2px(getResources(), mLineDistance);
         // 内部虚线的内部半径
         mInsideDottedLineRadius = mExternalDottedLineRadius - dp2px(getResources(), mDottedLineWidth);
         if (useGradient) {
-            LinearGradient gradient = new LinearGradient(0, 0, getMeasuredWidth(), getMeasuredHeight(), mArcForeEndColor, mArcForeStartColor, Shader.TileMode.CLAMP);
-            mArcForePaint.setShader(gradient);
+            SweepGradient sweepGradient = new SweepGradient(mArcCenterX, mArcCenterX, mArcForeStartColor, mArcForeEndColor);
+            mArcForePaint.setShader(sweepGradient);
         } else {
             mArcForePaint.setColor(mArcForeStartColor);
         }
@@ -290,121 +238,84 @@ public class ArcProgressBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mArcBgPaint.setColor(mArcBgColor);
-        canvas.drawText("信用额度", mArcCenterX - mProgressPaint.measureText("信用额度") / 2,
-                mArcCenterX - (mProgressPaint.descent() + mProgressPaint.ascent()) / 2 - dp2px(getResources(), 20), mProgressPaint);
         drawDottedLineArc(canvas);
-        drawRunDottedLineArc(canvas);
         drawRunText(canvas);
-        canvas.rotate(135, mArcCenterX, mArcCenterX);
-        canvas.drawArc(mArcRect, 0, 270, false, mArcBgPaint);//画背景圆弧
-//        canvas.drawRect(mArcRect, mArcBgPaint);//画直角矩形
-//        canvas.drawCircle(400, 400, 100, mArcForePaint);//画圆
-        canvas.drawArc(mArcRect, 0, 0, false, mArcForePaint);//画前景圆弧
-//        canvas.drawColor(Color.TRANSPARENT);//设置画布背景
-//        canvas.drawLine(100, 100, 400, 400, mArcBgPaint);//画直线
-//        canvas.drawPoint(500, 500, mArcBgPaint);//画点
-        mProgressPaint.setColor(getResources().getColor(R.color.gray));
-        mProgressPaint.setTextSize(dp2px(getResources(), 18));
+        drawInitView(canvas);
         drawRunFullLineArc(canvas);
-        if (isRestart) {
-            drawDottedLineArc(canvas);
-        }
     }
+
+    private void drawInitView(Canvas canvas) {
+        canvas.drawText(mUpdateDate, mArcCenterX - mDatePaint.measureText(mUpdateDate) / 2,
+                mArcCenterX - (mDatePaint.descent() - mDatePaint.ascent())
+                        - dp2px(getResources(), 35), mDatePaint);
+        float roundRectLeft = mArcCenterX - mBottomTextPaint.measureText(mScoreRank) / 2 - dp2px(getResources(), 10);
+        float roundRectTop = mArcCenterX + dp2px(getResources(), 43);
+        float roundRectRight = mArcCenterX + mBottomTextPaint.measureText(mScoreRank) / 2 + dp2px(getResources(), 10);
+        float roundRectBottom = mArcCenterX + dp2px(getResources(), 70);
+        Shader shader = new LinearGradient(roundRectLeft
+                , roundRectTop
+                , roundRectRight
+                , roundRectBottom
+                , new int[]{mRoundRectStartColor, mRoundRectEndColor},
+                null, Shader.TileMode.CLAMP);
+        mRoundRectPaint.setShader(shader);
+        canvas.drawRoundRect(new RectF(roundRectLeft,
+                        roundRectTop,
+                        roundRectRight,
+                        roundRectBottom),
+                dp2px(getResources(), 12), dp2px(getResources(), 12), mRoundRectPaint);
+        float bottomTextX = mArcCenterX - mBottomTextPaint.measureText(mScoreRank) / 2;
+        canvas.drawText(mScoreRank, bottomTextX
+                , mArcCenterX + (mBottomTextPaint.descent() - mBottomTextPaint.ascent()) + dp2px(getResources(), 43),
+                mBottomTextPaint
+        );
+        canvas.rotate(155, mArcCenterX, mArcCenterX);
+        //画背景圆弧
+        canvas.drawArc(mArcRect, 0, 230, false, mArcBgPaint);
+    }
+
 
     private void drawRunText(Canvas canvas) {
-        String progressStr = (mRealProgress * 25) + "";
-        if (!TextUtils.isEmpty(mProgressDesc)) {
-            progressStr = mProgressDesc;
+        String[] scores = spiltScore(mScore);
+        String decString = "." + scores[1];
+        String intString = scores[0];
+        if (mScoreProgress * 20 < Integer.parseInt(intString)) {
+            String string = mScoreProgress * 20 + "";
+            canvas.drawText(".00", mArcCenterX + mIntScorePaint.measureText(string) / 2 - mDecScorePaint.measureText(".00") / 2,
+                    mArcCenterX + (mDecScorePaint.descent() - mDecScorePaint.ascent()) / 2, mDecScorePaint);
+            canvas.drawText(string, mArcCenterX - mIntScorePaint.measureText(string) / 2 - mDecScorePaint.measureText(".00") / 2,
+                    mArcCenterX + (mDecScorePaint.descent() - mDecScorePaint.ascent()) / 2, mIntScorePaint);
+        } else {
+            canvas.drawText(decString, mArcCenterX + mIntScorePaint.measureText(intString) / 2 - mDecScorePaint.measureText(decString) / 2,
+                    mArcCenterX + (mDecScorePaint.descent() - mDecScorePaint.ascent()) / 2, mDecScorePaint);
+            canvas.drawText(intString, mArcCenterX - mIntScorePaint.measureText(intString) / 2 - mDecScorePaint.measureText(decString) / 2,
+                    mArcCenterX + (mDecScorePaint.descent() - mDecScorePaint.ascent()) / 2, mIntScorePaint);
         }
-        mProgressPaint.setTextSize(dp2px(getResources(), mProgressTextSize));
-        mProgressPaint.setColor(mProgressTextRunColor);
-        canvas.drawText(progressStr, mArcCenterX - mProgressPaint.measureText(progressStr) / 2,
-                mArcCenterX - (mProgressPaint.descent() + mProgressPaint.ascent()) / 2 + dp2px(getResources(), 13), mProgressPaint);
-    }
 
-    public void restart() {
-        isRestart = true;
-        this.mRealProgress = 0;
-        this.mProgressDesc = "";
-        invalidate();
-    }
-
-    /**
-     * 设置中间进度描述
-     *
-     * @param desc
-     */
-    public void setProgressDesc(String desc) {
-        this.mProgressDesc = desc;
-        postInvalidate();
-    }
-
-    /**
-     * 设置最大进度
-     *
-     * @param max
-     */
-    public void setMaxProgress(int max) {
-        this.mProgressMax = max;
-    }
-
-    /**
-     * 设置当前进度
-     *
-     * @param progress
-     */
-    public void setProgress(int progress) {
-        // 进度100% = 控件的75%
-        this.mRealProgress = progress;
-        isRestart = false;
-        this.mProgress = ((mDottedLineCount * 3 / 4) * progress) / mProgressMax;
-        postInvalidate();
-    }
-
-
-    /**
-     * 虚线变动
-     *
-     * @param canvas
-     */
-    private void drawRunDottedLineArc(Canvas canvas) {
-        mDottedLinePaint.setColor(mDottedRunColor);
-        float evenryDegrees = (float) (2.0f * Math.PI / mDottedLineCount);
-
-        float startDegress = (float) (225 * Math.PI / 180) + evenryDegrees / 2;
-
-        for (int i = 0; i < mProgress; i++) {
-            float degrees = i * evenryDegrees + startDegress;
-
-            float startX = mArcCenterX + (float) Math.sin(degrees) * mInsideDottedLineRadius;
-            float startY = mArcCenterX - (float) Math.cos(degrees) * mInsideDottedLineRadius;
-
-            float stopX = mArcCenterX + (float) Math.sin(degrees) * mExternalDottedLineRadius;
-            float stopY = mArcCenterX - (float) Math.cos(degrees) * mExternalDottedLineRadius;
-
-            canvas.drawLine(startX, startY, stopX, stopY, mDottedLinePaint);
-        }
     }
 
     /**
      * 实线变动
      *
-     * @param canvas
+     * @param canvas 画布
      */
     private void drawRunFullLineArc(Canvas canvas) {
+        canvas.rotate(-3, mArcCenterX, mArcCenterX);
         for (int i = 0; i < mProgress; i++) {
-            canvas.drawArc(mArcRect, 0, 270 * mProgress / 75, false, mArcForePaint);
+            canvas.drawArc(mArcRect, 3, 230 * mProgress / 80, false, mArcForePaint);
         }
     }
 
+    /**
+     * 虚线
+     */
     private void drawDottedLineArc(Canvas canvas) {
         mDottedLinePaint.setColor(mDottedDefaultColor);
         // 360 * Math.PI / 180
         float evenryDegrees = (float) (2.0f * Math.PI / mDottedLineCount);
 
-        float startDegress = (float) (135 * Math.PI / 180);
-        float endDegress = (float) (225 * Math.PI / 180);
+        float startDegress = (float) (112 * Math.PI / 180);
+        float endDegress = (float) (248 * Math.PI / 180);
 
         for (int i = 0; i < mDottedLineCount; i++) {
             float degrees = i * evenryDegrees;
@@ -418,22 +329,73 @@ public class ArcProgressBar extends View {
 
             float stopX = mArcCenterX + (float) Math.sin(degrees) * mExternalDottedLineRadius;
             float stopY = mArcCenterX - (float) Math.cos(degrees) * mExternalDottedLineRadius;
-
-
             canvas.drawLine(startX, startY, stopX, stopY, mDottedLinePaint);
         }
     }
 
-    private int[] getScreenWH() {
-        WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
-        int[] wh = {displayMetrics.widthPixels, displayMetrics.heightPixels};
-        return wh;
+    /**
+     * 设置最大进度
+     *
+     * @param max
+     */
+    public void setMaxProgress(int max) {
+        this.mProgressMax = max;
     }
+
+    /**
+     * 设置 更新日期描述
+     *
+     * @param updateDate 更新日期
+     */
+    public void setUpdateDate(String updateDate) {
+        this.mUpdateDate = updateDate;
+    }
+
+    /**
+     * 设置分数排行百分比
+     *
+     * @param scoreRank scoreRank
+     */
+    public void setScoreRank(String scoreRank) {
+        this.mScoreRank = scoreRank;
+    }
+
+    public void setScore(String score) {
+        this.mScore = score;
+    }
+
+    /**
+     * 设置当前进度
+     *
+     * @param progress progress
+     */
+    public void setProgress(int progress) {
+        // 进度100% = 控件的80%
+        this.mRealProgress = progress;
+        this.mProgress = (80 * progress) / mProgressMax;
+        postInvalidate();
+    }
+
+
+    public void setScoreProgress(int progress) {
+        this.mScoreProgress = progress;
+        postInvalidate();
+    }
+
 
     private float dp2px(Resources resources, float dp) {
         final float scale = resources.getDisplayMetrics().density;
         return dp * scale + 0.5f;
+    }
+
+
+    private String[] spiltScore(String mScore) {
+        String[] spiltScores;
+        if (mScore.contains(".")) {
+            spiltScores = mScore.split("\\.");
+        } else {
+            spiltScores = new String[]{mScore, "00"};
+        }
+        return spiltScores;
     }
 }

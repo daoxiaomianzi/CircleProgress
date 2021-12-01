@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mArcProgressBar = (ArcProgressBar) findViewById(R.id.arcProgressBar);
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 61);
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 50);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -27,10 +27,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                mArcProgressBar.setProgressDesc("1530");
+//                mArcProgressBar.setProgressDesc("1530");
             }
         });
         valueAnimator.setDuration(5000);
         valueAnimator.start();
+
+
+        ValueAnimator valueAnimator1 = ValueAnimator.ofInt(0, 43);
+        valueAnimator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+mArcProgressBar.setScoreProgress((Integer) animation.getAnimatedValue());
+            }
+        });
+        valueAnimator1.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+//                mArcProgressBar.setProgressDesc("1530");
+            }
+        });
+        valueAnimator1.setDuration(5000);
+        valueAnimator1.start();
     }
 }

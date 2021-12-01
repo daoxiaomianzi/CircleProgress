@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#5a6076"
     android:gravity="center"
     tools:context="com.xuyong.circleprogress.MainActivity">
 
     <com.xuyong.circleprogress.ArcProgressBar
         android:id="@+id/arcProgressBar"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:layout_centerInParent="true"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_gravity="center"
-        app:arcDistance="0"
         app:dottedLineHeight="1"
-        app:dottedLineWidth="1" />
+        app:dottedLineWidth="6"
+        app:lineDistance="1" />
 
 </LinearLayout>
