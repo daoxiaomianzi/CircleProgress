@@ -302,7 +302,7 @@ public class ArcProgressBar extends View {
     private void drawRunFullLineArc(Canvas canvas) {
         canvas.rotate(-3, mArcCenterX, mArcCenterX);
         for (int i = 0; i < mProgress; i++) {
-            canvas.drawArc(mArcRect, 3, 230 * mProgress / 80, false, mArcForePaint);
+            canvas.drawArc(mArcRect, 3, 230 * mProgress / (100 * 230 / 360), false, mArcForePaint);
         }
     }
 
@@ -372,7 +372,7 @@ public class ArcProgressBar extends View {
     public void setProgress(int progress) {
         // 进度100% = 控件的80%
         this.mRealProgress = progress;
-        this.mProgress = (80 * progress) / mProgressMax;
+        this.mProgress = (100 * 230 / 360 * progress) / mProgressMax;
         postInvalidate();
     }
 
