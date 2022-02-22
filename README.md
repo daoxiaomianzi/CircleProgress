@@ -23,4 +23,5 @@
 
 -----------------------------
 效果图：
-![](https://github.com/daoxiaomianzi/CircleProgress/blob/master/screen/xiaoguotu.png)
+![xiaoguotu](https://user-images.githubusercontent.com/20313516/155060661-f1bb62e3-0126-4cf3-8afe-0413edaa69f8.png)
+
