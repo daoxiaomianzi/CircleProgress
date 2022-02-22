@@ -22,6 +22,10 @@
 | arcUseGradient  |useGradient| arcUseGradient|setUseGradient(boolean useGradient)|是否使用渐变
 
 -----------------------------
-效果图：
+master效果图：
 ![xiaoguotu](https://user-images.githubusercontent.com/20313516/155060661-f1bb62e3-0126-4cf3-8afe-0413edaa69f8.png)
+feat-1效果图：
+![xiaogutuo1](https://user-images.githubusercontent.com/20313516/155060758-a1e4d0ee-5d51-4d3b-b14e-d9fa8c2b4a55.png)
+
+
 
