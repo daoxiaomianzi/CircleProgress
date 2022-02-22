@@ -22,5 +22,5 @@
 | arcUseGradient  |useGradient| arcUseGradient|setUseGradient(boolean useGradient)|是否使用渐变
 
 -----------------------------
-效果图：
-![](https://github.com/daoxiaomianzi/CircleProgress/blob/master/screen/xiaoguotu.png)
+效果图：切到分支1查看
+
